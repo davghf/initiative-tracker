@@ -4,9 +4,9 @@ function numberControlHTML(value, field, index = null) {
 
     return `
         <div class="num-control" data-field="${field}" ${index !== null ? `data-index="${index}"` : ""}>
-            <button onclick="changeNumber(this, -1)">−</button>
+            <button type="button" tabindex="-1" onmousedown="changeNumber(this, -1); event.preventDefault();">−</button>
             <input type="number" ${nameAttr} ${ariaLabel} value="${value}" onchange="handleInputChange(this)" />
-            <button onclick="changeNumber(this, 1)">+</button>
+            <button type="button" tabindex="-1" onmousedown="changeNumber(this, 1); event.preventDefault();">+</button>
         </div>
     `;
 }
