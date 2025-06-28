@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Initiative Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Initiative Tracker</h1>
+
+  <div class="controls">
+    <button onclick="toggleTheme()" id="theme-toggle">Toggle Theme</button>
+  </div>
+
+  <div class="controls">
+    <button onclick="addRow()">Add Row</button>
+    <button onclick="rollAllInitiatives()">Roll Initiatives</button>
+    <button onclick="sortByInitiative()">Sort by Initiative</button>
+    <button onclick="nextTurn()">Next Turn</button>
+    <button onclick="updateURL()">Generate URL</button>
+  </div>
+
+  <table id="tracker">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Base Init</th>
+        <th>Init</th>
+        <th>HP</th>
+        <th>AC</th>
+        <th>Remove</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="script.js"></script>
+</body>
+</html>
