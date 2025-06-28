@@ -1,3 +1,4 @@
+
 let data = [];
 let currentTurn = 0;
 
@@ -11,7 +12,7 @@ function renderView() {
     } else {
         const tbody = document.querySelector("#tracker tbody");
         tbody.innerHTML = "";
-        data.forEach(addRow);
+        data.forEach((char, index) => addRow(char, index));
     }
 }
 
@@ -58,23 +59,6 @@ function changeNumber(btn, delta) {
     renderView(); // update both views
 }
 
-function numberControlHTML(value, field) {
-    return `
-        <div class="num-control" data-field="${field}">
-            <button onclick="changeNumber(this, -1)">−</button>
-            <input type="number" value="${value}" onchange="saveState()" />
-            <button onclick="changeNumber(this, 1)">+</button>
-        </div>
-    `;
-}
-
-function changeNumber(btn, delta) {
-    const container = btn.parentElement;
-    const input = container.querySelector("input");
-    input.value = parseInt(input.value || "0") + delta;
-    saveState();
-}
-
 function addRow(char = {}, index = null) {
     const table = document.querySelector("#tracker tbody");
     const row = table.insertRow();
@@ -89,57 +73,59 @@ function addRow(char = {}, index = null) {
     const acCell = row.insertCell();
     const removeCell = row.insertCell();
 
-    row.dataset.index = table.rows.length - 1;
-
-    idCell.textContent = table.rows.length;
+    idCell.textContent = index + 1;
 
     nameCell.innerHTML = `<input value="${char.name || ""}" onchange="saveState()" />`;
-    baseInitCell.innerHTML = numberControlHTML(char.baseInit || 0, "baseInit");
-    initCell.innerHTML = numberControlHTML(char.init || 0, "init");
-    hpCell.innerHTML = numberControlHTML(char.hp || 0, "hp");
-    acCell.innerHTML = numberControlHTML(char.ac || 0, "ac");
-
-    removeCell.innerHTML = `<button onclick="removeRow(this)">❌</button>`;
+    baseInitCell.innerHTML = numberControlHTML(char.baseInit || 0, "baseInit", index);
+    initCell.innerHTML = numberControlHTML(char.init || 0, "init", index);
+    hpCell.innerHTML = numberControlHTML(char.hp || 0, "hp", index);
+    acCell.innerHTML = numberControlHTML(char.ac || 0, "ac", index);
+    removeCell.innerHTML = `<button onclick="removeCharacter(${index})">❌</button>`;
 
     if (index === currentTurn) {
         row.classList.add("current-turn");
     }
-
-    saveState();
 }
 
-function removeRow(btn) {
-    const row = btn.closest("tr");
-    row.remove();
+function addNewCharacter() {
+    data.push({ name: "", baseInit: 0, init: 0, hp: 0, ac: 0 });
     saveState();
+    renderView();
+}
+
+function removeCharacter(index) {
+    data.splice(index, 1);
+    if (currentTurn >= data.length) currentTurn = 0;
+    saveState();
+    renderView();
 }
 
 function rollAllInitiatives() {
-    const rows = document.querySelectorAll("#tracker tbody tr");
-    rows.forEach((row) => {
-        const base = parseInt(row.cells[2].querySelector("input").value) || 0;
-        const roll = base + Math.floor(Math.random() * 20) + 1;
-        row.cells[3].querySelector("input").value = roll;
-    });
+    data = data.map(char => ({
+        ...char,
+        init: char.baseInit + Math.floor(Math.random() * 20) + 1
+    }));
     saveState();
+    renderView();
 }
 
 function nextTurn() {
     if (data.length === 0) return;
-
     currentTurn = (currentTurn + 1) % data.length;
-    renderView(); // this will apply highlight correctly
+    renderView();
 }
 
 function saveState() {
     const rows = document.querySelectorAll("#tracker tbody tr");
-    data = Array.from(rows).map(row => ({
-        name: row.cells[1].querySelector("input").value,
-        baseInit: +row.cells[2].querySelector("input").value,
-        init: +row.cells[3].querySelector("input").value,
-        hp: +row.cells[4].querySelector("input").value,
-        ac: +row.cells[5].querySelector("input").value,
-    }));
+    if (rows.length > 0) {
+        data = Array.from(rows).map(row => ({
+            name: row.cells[1].querySelector("input").value,
+            baseInit: +row.cells[2].querySelector("input").value,
+            init: +row.cells[3].querySelector("input").value,
+            hp: +row.cells[4].querySelector("input").value,
+            ac: +row.cells[5].querySelector("input").value,
+        }));
+    }
 }
 
 function updateURL() {
@@ -160,39 +146,18 @@ function loadFromURL() {
             const state = JSON.parse(atob(params.get("state")));
             data = state.chars || [];
             currentTurn = state.turn || 0;
-
-            document.querySelector("#tracker tbody").innerHTML = "";
-            data.forEach(addRow);
-
-            // Set the current turn row
-            const rows = document.querySelectorAll("#tracker tbody tr");
-            if (rows[currentTurn]) {
-                rows[currentTurn].classList.add("current-turn");
-            }
         } catch (e) {
             console.error("Invalid state in URL");
         }
     }
-
     renderView();
 }
 
 function sortByInitiative() {
     saveState();
-
-    // Sort data array by initiative descending
     data.sort((a, b) => b.init - a.init);
-
-    // Re-render table
-    const tbody = document.querySelector("#tracker tbody");
-    tbody.innerHTML = "";
-    data.forEach(addRow);
-
     currentTurn = 0;
-    const rows = document.querySelectorAll("#tracker tbody tr");
-    if (rows.length > 0) {
-        rows[0].classList.add("current-turn");
-    }
+    renderView();
 }
 
 function toggleTheme() {
@@ -219,5 +184,3 @@ window.onload = () => {
     loadFromURL();
     window.addEventListener("resize", renderView);
 };
-
-window.onload = loadFromURL;
