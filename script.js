@@ -1,6 +1,23 @@
 let data = [];
 let currentTurn = 0;
 
+function numberControlHTML(value, field) {
+  return `
+    <div class="num-control" data-field="${field}">
+      <button onclick="changeNumber(this, -1)">−</button>
+      <input type="number" value="${value}" onchange="saveState()" />
+      <button onclick="changeNumber(this, 1)">+</button>
+    </div>
+  `;
+}
+
+function changeNumber(btn, delta) {
+  const container = btn.parentElement;
+  const input = container.querySelector("input");
+  input.value = parseInt(input.value || "0") + delta;
+  saveState();
+}
+
 function addRow(char = {}) {
   const table = document.querySelector("#tracker tbody");
   const row = table.insertRow();
@@ -18,10 +35,10 @@ function addRow(char = {}) {
   idCell.textContent = table.rows.length;
 
   nameCell.innerHTML = `<input value="${char.name || ""}" onchange="saveState()" />`;
-  baseInitCell.innerHTML = `<input type="number" value="${char.baseInit || 0}" onchange="saveState()" />`;
-  initCell.innerHTML = `<input type="number" value="${char.init || 0}" onchange="saveState()" />`;
-  hpCell.innerHTML = `<input type="number" value="${char.hp || 0}" onchange="saveState()" />`;
-  acCell.innerHTML = `<input type="number" value="${char.ac || 0}" onchange="saveState()" />`;
+  baseInitCell.innerHTML = numberControlHTML(char.baseInit || 0, "baseInit");
+  initCell.innerHTML = numberControlHTML(char.init || 0, "init");
+  hpCell.innerHTML = numberControlHTML(char.hp || 0, "hp");
+  acCell.innerHTML = numberControlHTML(char.ac || 0, "ac");
 
   removeCell.innerHTML = `<button onclick="removeRow(this)">❌</button>`;
 
