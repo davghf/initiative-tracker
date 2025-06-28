@@ -1,0 +1,18 @@
+#table-view table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--card-bg);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+#table-view th,
+#table-view td {
+  border: 1px solid var(--border);
+  padding: 0.5rem;
+  text-align: center;
+}
+
+tr.current-turn {
+  background-color: var(--current-turn);
+}

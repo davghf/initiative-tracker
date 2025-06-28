@@ -1,0 +1,10 @@
+body.light {
+  --bg: #f2f4f8;
+  --card-bg: #fff;
+  --border: #ccc;
+  --primary: #1976d2;
+  --current-turn: #e0f7e9;
+  --text: #333;
+  --input-bg: #fafafa;
+  --header-bg: #e9eff5;
+}

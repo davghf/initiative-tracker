@@ -1,0 +1,17 @@
+:root {
+  --bg: #121212;
+  --card-bg: #1e1e1e;
+  --border: #333;
+  --primary: #90caf9;
+  --current-turn: #2e7d32;
+  --text: #f5f5f5;
+  --input-bg: #2a2a2a;
+  --header-bg: #222;
+}
+
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
