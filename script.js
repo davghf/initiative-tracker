@@ -1,6 +1,63 @@
 let data = [];
 let currentTurn = 0;
 
+function renderView() {
+  const isMobile = window.innerWidth <= 600;
+  document.getElementById("table-view").style.display = isMobile ? "none" : "block";
+  document.getElementById("card-view").style.display = isMobile ? "block" : "none";
+
+  if (isMobile) {
+    renderCards();
+  } else {
+    const tbody = document.querySelector("#tracker tbody");
+    tbody.innerHTML = "";
+    data.forEach(addRow);
+  }
+}
+
+function renderCards() {
+  const cardView = document.getElementById("card-view");
+  cardView.innerHTML = "";
+
+  data.forEach((char, index) => {
+    const card = document.createElement("div");
+    card.className = "card" + (index === currentTurn ? " current-turn" : "");
+    card.innerHTML = `
+      <strong>${char.name || "Unnamed"}</strong>
+      <div>Base Init: ${numberControlHTML(char.baseInit || 0, "baseInit", index)}</div>
+      <div>Init: ${numberControlHTML(char.init || 0, "init", index)}</div>
+      <div>HP: ${numberControlHTML(char.hp || 0, "hp", index)}</div>
+      <div>AC: ${numberControlHTML(char.ac || 0, "ac", index)}</div>
+    `;
+    cardView.appendChild(card);
+  });
+}
+
+function numberControlHTML(value, field, index = null) {
+  return `
+    <div class="num-control" data-field="${field}" ${index !== null ? `data-index="${index}"` : ""}>
+      <button onclick="changeNumber(this, -1)">−</button>
+      <input type="number" value="${value}" onchange="saveState()" />
+      <button onclick="changeNumber(this, 1)">+</button>
+    </div>
+  `;
+}
+
+function changeNumber(btn, delta) {
+  const container = btn.parentElement;
+  const input = container.querySelector("input");
+  input.value = parseInt(input.value || "0") + delta;
+
+  const index = container.getAttribute("data-index");
+  const field = container.getAttribute("data-field");
+  if (index !== null) {
+    data[+index][field] = +input.value;
+  }
+
+  saveState();
+  renderView(); // update both views
+}
+
 function numberControlHTML(value, field) {
   return `
     <div class="num-control" data-field="${field}">
@@ -149,6 +206,7 @@ function applySavedTheme() {
 window.onload = () => {
   applySavedTheme();
   loadFromURL();
+  window.addEventListener("resize", renderView);
 };
 
 window.onload = loadFromURL;

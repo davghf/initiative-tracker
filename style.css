@@ -83,6 +83,24 @@ input[type="text"] {
   }
 }
 
+#card-view {
+  display: none;
+  padding: 0.5rem;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card.current-turn {
+  border: 2px solid var(--current-turn);
+}
+
 .num-control {
   display: flex;
   justify-content: center;
