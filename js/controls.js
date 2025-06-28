@@ -22,7 +22,15 @@ function rollAllInitiatives() {
 function nextTurn() {
     if (data.length === 0) 
         return;
+
     currentTurn = (currentTurn + 1) % data.length;
+
+    // Rotate the array so the currentTurn player is at the top
+    if (currentTurn !== 0) {
+        data = data.slice(currentTurn).concat(data.slice(0, currentTurn));
+        currentTurn = 0;
+    }
+
     renderView();
 }
 
