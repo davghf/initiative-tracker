@@ -46,3 +46,10 @@ function applySavedTheme() {
         document.body.classList.add("light");
     }
 }
+
+let showHpAc = true;
+
+function toggleHpAc() {
+    showHpAc = !showHpAc;
+    renderView();
+}

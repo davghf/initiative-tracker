@@ -3,6 +3,14 @@ function renderView() {
     document.getElementById("table-view").style.display = isMobile ? "none" : "block";
     document.getElementById("card-view").style.display = isMobile ? "block" : "none";
 
+    // Toggle HP/AC columns in table header
+    const hpTh = document.querySelector("#tracker th:nth-child(5)");
+    const acTh = document.querySelector("#tracker th:nth-child(6)");
+    if (hpTh && acTh) {
+        hpTh.style.display = showHpAc ? "" : "none";
+        acTh.style.display = showHpAc ? "" : "none";
+    }
+
     if (isMobile) {
         renderCards();
     } else {
@@ -29,8 +37,13 @@ function addRow(char = {}, index = null) {
     nameCell.innerHTML = `<input name="name-${index}" aria-label="Name" value="${char.name || ""}" onchange="updateName(this, ${index})" />`;
     baseInitCell.innerHTML = numberControlHTML(char.baseInit || 0, "baseInit", index);
     initCell.innerHTML = numberControlHTML(char.init || 0, "init", index);
+
+    // Toggle HP/AC cell visibility
+    hpCell.style.display = showHpAc ? "" : "none";
+    acCell.style.display = showHpAc ? "" : "none";
     hpCell.innerHTML = numberControlHTML(char.hp || 0, "hp", index);
     acCell.innerHTML = numberControlHTML(char.ac || 0, "ac", index);
+
     removeCell.innerHTML = `<button onclick="removeCharacter(${index})">❌</button>`;
 
     if (index === currentTurn) {
@@ -49,8 +62,8 @@ function renderCards() {
             <input type="text" value="${char.name || ""}" onchange="updateName(this, ${index})" name="name-${index}" aria-label="Name" />
             <div>Base Init: ${numberControlHTML(char.baseInit || 0, "baseInit", index)}</div>
             <div>Init: ${numberControlHTML(char.init || 0, "init", index)}</div>
-            <div>HP: ${numberControlHTML(char.hp || 0, "hp", index)}</div>
-            <div>AC: ${numberControlHTML(char.ac || 0, "ac", index)}</div>
+            ${showHpAc ? `<div>HP: ${numberControlHTML(char.hp || 0, "hp", index)}</div>
+            <div>AC: ${numberControlHTML(char.ac || 0, "ac", index)}</div>` : ""}
             <div style="margin-top: 8px;">
               <button onclick="removeCharacter(${index})">❌ Delete</button>
             </div>
